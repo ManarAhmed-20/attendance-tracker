@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📊 Interactive Attendance Tracker
 
-## Getting Started
+A modern, fast, and responsive web application built with **Next.js 16**, **TypeScript**, and **Tailwind CSS** for real-time student attendance management.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## ✨ Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **⚡ Real-time Attendance Status Tracking:** Mark students as Present, Absent, or Late with instant updates.
+- **📊 Dynamic Cumulative Absence Calculation:** Automatically updates attendance percentages based on single-session impacts (based on 20 sessions per semester).
+- **⚠️ Smart Warning System:** Automatically triggers early-warning alerts for students exceeding attendance risk thresholds (>15%).
+- **🔍 Instant Search & Filter Tabs:** Filter students dynamically by status (*All, Present, Absent, Late, Warning*) or search by name.
+- **💾 Local Storage Persistence:** Preserves student attendance states across page reloads.
+- **📱 Fully Responsive & RTL Support:** Native Arabic interface with a clean UI tailored for all screen sizes.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠️ Tech Stack
 
-## Learn More
+- **Framework:** [Next.js 16](https://nextjs.org/) (App Router & Turbopack)
+- **Language:** [TypeScript](https://www.typescriptlang.org/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **Icons:** [Lucide React](https://lucide.dev/)
+- **Deployment:** [Vercel](https://vercel.com/)
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🚀 Getting Started (Local Setup)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Follow these steps to run the project locally on your machine.
 
-## Deploy on Vercel
+### Prerequisites
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Ensure you have the following installed:
+- [Node.js](https://nodejs.org/) (v18.0 or higher recommended)
+- [Git](https://git-scm.com/)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+### Installation & Run Steps
+
+1. **Clone the Repository**
+   ```bash
+   git clone [https://github.com/ManarAhmed-20/attendance-tracker.git](https://github.com/ManarAhmed-20/attendance-tracker.git)
+   cd attendance-tracker
