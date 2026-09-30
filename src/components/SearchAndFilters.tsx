@@ -22,7 +22,7 @@ export function SearchAndFilters() {
   ];
 
   return (
-    <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 mb-4" dir="rtl">
+    <div className="flex flex-col-reverse md:flex-row items-stretch md:items-center justify-between gap-2.5 sm:gap-3 mb-1 sm:mb-2 md:mb-0" dir="rtl">
       {/* Instant Search Bar */}
       <div className="relative flex-1">
         <input
@@ -30,18 +30,18 @@ export function SearchAndFilters() {
           value={state.searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="بحث فوري باسم الطالب..."
-          className="w-full pl-4 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-xs focus:outline-hidden focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-slate-800 placeholder-slate-400"
+          className="w-full pl-4 pr-10 py-2 sm:py-2.5 bg-white border border-slate-200 rounded-xl text-xs focus:outline-hidden focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-slate-800 placeholder-slate-400"
         />
-        <Search className="absolute right-3.5 top-3 w-4 h-4 text-slate-400" />
+        <Search className="absolute right-3.5 top-2.5 sm:top-3 w-4 h-4 text-slate-400" />
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-1 bg-slate-200/60 p-1 rounded-xl overflow-x-auto scrollbar-none">
+      <div className="flex items-center gap-1 bg-slate-200/60 p-1 rounded-xl overflow-x-auto scrollbar-none w-full md:w-auto">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
+            className={`flex-1 md:flex-initial flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
               state.activeTab === tab.id
                 ? "bg-white text-slate-800 shadow-xs font-semibold"
                 : "text-slate-600 hover:text-slate-900"
@@ -49,7 +49,7 @@ export function SearchAndFilters() {
           >
             <span>{tab.label}</span>
             {tab.icon}
-            {tab.count !== undefined && <span className="opacity-75">({tab.count})</span>}
+            {tab.count !== undefined && <span className="opacity-75 text-[11px]">({tab.count})</span>}
           </button>
         ))}
       </div>

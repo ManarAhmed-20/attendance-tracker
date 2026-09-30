@@ -64,29 +64,29 @@ export function StatsCards() {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5" dir="rtl">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 mb-1 sm:mb-2 md:mb-0" dir="rtl">
       {cards.map((card, idx) => {
         const IconComponent = card.icon;
         return (
           <div
             key={idx}
-            className={`relative flex flex-col justify-between p-4 rounded-2xl border ${card.borderColor} bg-gradient-to-b ${card.gradientBg} shadow-sm transition-all hover:shadow-md h-32`}
+            className={`relative flex flex-col justify-between p-3 sm:p-4 rounded-2xl border ${card.borderColor} bg-gradient-to-b ${card.gradientBg} shadow-sm transition-all hover:shadow-md h-28 sm:h-32`}
           >
             <div className="flex items-center justify-between">
-              <span className={`text-xs font-bold ${card.textColor}`}>
+              <span className={`text-[11px] sm:text-xs font-bold ${card.textColor} truncate max-w-[100px] sm:max-w-none`}>
                 {card.title}
               </span>
-              <div className={`p-2 rounded-xl ${card.iconBg} flex items-center justify-center`}>
-                <IconComponent className="w-5 h-5" />
+              <div className={`p-1.5 sm:p-2 rounded-xl ${card.iconBg} flex items-center justify-center`}>
+                <IconComponent className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
             </div>
 
             <div className="flex items-end justify-between mt-auto">
               <div className="flex items-baseline gap-1">
-                <span className={`text-2xl font-black ${card.textColor}`}>{card.value}</span>
-                <span className="text-xs font-medium text-slate-500">{card.unit}</span>
+                <span className={`text-xl sm:text-2xl font-black ${card.textColor}`}>{card.value}</span>
+                <span className="text-[10px] sm:text-xs font-medium text-slate-500">{card.unit}</span>
               </div>
-              <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${card.badgeBg}`}>
+              <span className={`text-[10px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full ${card.badgeBg}`}>
                 {card.percentage}
               </span>
             </div>
