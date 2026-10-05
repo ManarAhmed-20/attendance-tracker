@@ -3,6 +3,7 @@
 import React from "react";
 import { useAttendance } from "@/context/AttendanceContext";
 import { Clock, CheckCheck } from "lucide-react";
+import { SaveSessionButton } from "./SaveSessionButton";
 
 export function HeaderBar() {
   const { markAllPresent } = useAttendance();
@@ -35,11 +36,13 @@ export function HeaderBar() {
           </p>
         </div>
 
-        {/* Left Side: Mark All Present Button */}
-        <div className="flex items-center self-stretch sm:self-center">
+        {/* Left Side: Actions */}
+        <div className="flex flex-row items-center gap-2 self-stretch sm:self-center mt-3 sm:mt-0">
+          <SaveSessionButton />
+          
           <button
             onClick={markAllPresent}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-slate-700 text-xs font-semibold shadow-2xs transition-all active:scale-98 cursor-pointer"
+            className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-slate-700 text-xs font-semibold shadow-2xs transition-all active:scale-98 cursor-pointer"
           >
             <CheckCheck className="w-4 h-4 text-emerald-600 font-bold" />
             <span>تحديد الكل حاضر</span>

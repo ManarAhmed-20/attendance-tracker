@@ -1,6 +1,13 @@
 "use client";
 
-import React, { createContext, useContext, useReducer, useEffect, useMemo, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useReducer,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react";
 import { Student, StudentStatus, FilterTab } from "@/types";
 import { initialStudents } from "@/utils/mockData";
 
@@ -22,6 +29,7 @@ type Action =
   | { type: "MARK_ALL_PRESENT" }
   | { type: "SET_SEARCH"; payload: string }
   | { type: "SET_TAB"; payload: FilterTab }
+  | { type: "SAVE_SESSION" }
   | { type: "SET_TOAST"; payload: string | null };
 
 const AttendanceContext = createContext<{
@@ -30,19 +38,31 @@ const AttendanceContext = createContext<{
   markAllPresent: () => void;
   setSearchQuery: (query: string) => void;
   setActiveTab: (tab: FilterTab) => void;
-  stats: { total: number; present: number; absent: number; late: number; warning: number };
+  stats: {
+    total: number;
+    present: number;
+    absent: number;
+    late: number;
+    warning: number;
+  };
   filteredStudents: AttendanceStudent[];
+  saveSession: () => void;
 } | null>(null);
-
 // Calculate cumulative rate based on 20 sessions per semester (+5% if absent in current session)
-function calculateDynamicAbsence(baseRate: number, status: StudentStatus): number {
+function calculateDynamicAbsence(
+  baseRate: number,
+  status: StudentStatus,
+): number {
   if (status === "Absent") {
     return Math.min(100, baseRate + 5); // Add 5% for current session absence
   }
   return baseRate;
 }
 
-function attendanceReducer(state: AttendanceState, action: Action): AttendanceState {
+function attendanceReducer(
+  state: AttendanceState,
+  action: Action,
+): AttendanceState {
   switch (action.type) {
     case "SET_STUDENTS":
       return { ...state, students: action.payload };
@@ -51,7 +71,10 @@ function attendanceReducer(state: AttendanceState, action: Action): AttendanceSt
       const updated = state.students.map((student) => {
         if (student.id === action.payload.id) {
           const newStatus = action.payload.status;
-          const newAbsenceRate = calculateDynamicAbsence(student.baseAbsenceRate, newStatus);
+          const newAbsenceRate = calculateDynamicAbsence(
+            student.baseAbsenceRate,
+            newStatus,
+          );
           return {
             ...student,
             status: newStatus,
@@ -81,6 +104,15 @@ function attendanceReducer(state: AttendanceState, action: Action): AttendanceSt
     case "SET_TOAST":
       return { ...state, toastMessage: action.payload };
 
+    case "SAVE_SESSION": {
+      const updated = state.students.map((student) => ({
+        ...student,
+        baseAbsenceRate: student.absenceRate, 
+        status: "Present" as StudentStatus, 
+      }));
+      return { ...state, students: updated };
+    }
+
     default:
       return state;
   }
@@ -88,15 +120,22 @@ function attendanceReducer(state: AttendanceState, action: Action): AttendanceSt
 
 const STORAGE_KEY = "attendance_tracker_v3_data";
 
-export const AttendanceProvider = ({ children }: { children: React.ReactNode }) => {
+export const AttendanceProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   // Initialize baseAbsenceRate alongside initial data
   const initialData: AttendanceStudent[] = useMemo(
     () =>
       initialStudents.map((s) => ({
         ...s,
-        baseAbsenceRate: s.status === "Absent" ? Math.max(0, s.absenceRate - 5) : s.absenceRate,
+        baseAbsenceRate:
+          s.status === "Absent"
+            ? Math.max(0, s.absenceRate - 5)
+            : s.absenceRate,
       })),
-    []
+    [],
   );
 
   const [state, dispatch] = useReducer(attendanceReducer, {
@@ -121,21 +160,35 @@ export const AttendanceProvider = ({ children }: { children: React.ReactNode }) 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state.students));
   }, [state.students]);
 
-  const updateStatus = useCallback((id: number, status: StudentStatus) => {
-    dispatch({ type: "UPDATE_STATUS", payload: { id, status } });
-    const student = state.students.find((s) => s.id === id);
-    const statusText = status === "Present" ? "حاضر" : status === "Absent" ? "غائب (+5%)" : "متأخر";
+  const updateStatus = useCallback(
+    (id: number, status: StudentStatus) => {
+      dispatch({ type: "UPDATE_STATUS", payload: { id, status } });
+      const student = state.students.find((s) => s.id === id);
+      const statusText =
+        status === "Present"
+          ? "حاضر"
+          : status === "Absent"
+            ? "غائب (+5%)"
+            : "متأخر";
 
-    dispatch({ type: "SET_TOAST", payload: `تم تحديد ${student?.name || "الطالب"} كـ (${statusText})` });
+      dispatch({
+        type: "SET_TOAST",
+        payload: `تم تحديد ${student?.name || "الطالب"} كـ (${statusText})`,
+      });
 
-    setTimeout(() => {
-      dispatch({ type: "SET_TOAST", payload: null });
-    }, 2500);
-  }, [state.students]);
+      setTimeout(() => {
+        dispatch({ type: "SET_TOAST", payload: null });
+      }, 2500);
+    },
+    [state.students],
+  );
 
   const markAllPresent = useCallback(() => {
     dispatch({ type: "MARK_ALL_PRESENT" });
-    dispatch({ type: "SET_TOAST", payload: "تم تحويل جميع الطلاب إلى حالة (حاضر) وإعادة ضبط نسبة الحصة" });
+    dispatch({
+      type: "SET_TOAST",
+      payload: "تم تحويل جميع الطلاب إلى حالة (حاضر) وإعادة ضبط نسبة الحصة",
+    });
 
     setTimeout(() => {
       dispatch({ type: "SET_TOAST", payload: null });
@@ -151,7 +204,10 @@ export const AttendanceProvider = ({ children }: { children: React.ReactNode }) 
   }, []);
 
   const stats = useMemo(() => {
-    let present = 0, absent = 0, late = 0, warning = 0;
+    let present = 0,
+      absent = 0,
+      late = 0,
+      warning = 0;
     for (const s of state.students) {
       if (s.status === "Present") present++;
       if (s.status === "Absent") absent++;
@@ -174,7 +230,8 @@ export const AttendanceProvider = ({ children }: { children: React.ReactNode }) 
       const matchesSearch = student.name.toLowerCase().includes(query);
       if (!matchesSearch) return false;
 
-      if (state.activeTab === "present") return student.status === "Present" || student.status === "Late";
+      if (state.activeTab === "present")
+        return student.status === "Present" || student.status === "Late";
       if (state.activeTab === "absent") return student.status === "Absent";
       if (state.activeTab === "late") return student.status === "Late";
       if (state.activeTab === "warning") return student.absenceRate > 15;
@@ -182,6 +239,14 @@ export const AttendanceProvider = ({ children }: { children: React.ReactNode }) 
       return true;
     });
   }, [state.students, state.searchQuery, state.activeTab]);
+  const saveSession = useCallback(() => {
+    dispatch({ type: "SAVE_SESSION" });
+    dispatch({ type: "SET_TOAST", payload: "تم حفظ سجل الحضور وتحديث النسب التراكمية بنجاح! جاهز للحصة القادمة." });
+
+    setTimeout(() => {
+      dispatch({ type: "SET_TOAST", payload: null });
+    }, 3500);
+  }, []);
 
   const value = useMemo(
     () => ({
@@ -192,15 +257,21 @@ export const AttendanceProvider = ({ children }: { children: React.ReactNode }) 
       setActiveTab,
       stats,
       filteredStudents,
+    saveSession,
     }),
-    [state, updateStatus, markAllPresent, setSearchQuery, setActiveTab, stats, filteredStudents]
+    [state, updateStatus, markAllPresent, setSearchQuery, setActiveTab, stats, filteredStudents, saveSession]
   );
 
-  return <AttendanceContext.Provider value={value}>{children}</AttendanceContext.Provider>;
+  return (
+    <AttendanceContext.Provider value={value}>
+      {children}
+    </AttendanceContext.Provider>
+  );
 };
 
 export const useAttendance = () => {
   const context = useContext(AttendanceContext);
-  if (!context) throw new Error("useAttendance must be used within AttendanceProvider");
+  if (!context)
+    throw new Error("useAttendance must be used within AttendanceProvider");
   return context;
 };
