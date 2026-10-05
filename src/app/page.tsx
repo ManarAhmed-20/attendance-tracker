@@ -6,6 +6,7 @@ import { StatsCards } from "@/components/StatsCards";
 import { SearchAndFilters } from "@/components/SearchAndFilters";
 import { StudentItem } from "@/components/StudentItem";
 import { Toast } from "@/components/Toast";
+import { StickyMobileBar } from "@/components/StickyMobileBar";
 
 function DashboardContent() {
   const { filteredStudents } = useAttendance();
@@ -55,6 +56,7 @@ function DashboardContent() {
 
       {/* Global toast notifications component */}
       <Toast />
+      <StickyMobileBar />
     </main>
   );
 }
